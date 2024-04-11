@@ -84,6 +84,11 @@ const userSchema = new mongoose.Schema({
       url: String,
     },
   },
+
+  emailPic: {
+    public_id: String,
+    url: String,
+  }
 });
 
 export const User = mongoose.model("User", userSchema);

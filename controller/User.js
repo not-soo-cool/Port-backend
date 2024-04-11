@@ -2,6 +2,7 @@ import { User } from "../model/User.js";
 import jwt from "jsonwebtoken";
 import { sendMail } from "../middlewares/sendMail.js";
 import cloudinary from "cloudinary";
+import fs from "fs"
 
 export const login = async (req, res) => {
   try {
@@ -96,11 +97,34 @@ export const contact = async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
-    const userMessage = `Hey, I am ${name}. My email is ${email}. My message is ${message}.`;
+    // const imgBuffer = fs.readFileSync('C:/Users/91827/OneDrive/Documents/Web Dev/Projects/3D_Resume/frontend/src/images/IMG_6295.png')
+    // const imgBase64 = imgBuffer.toString('base64');
+
+    // const attachments = [
+    //   {
+    //     filename: 'IMG_6294.jpg',
+    //     content: imgBuffer,
+    //     encoding: 'base64',
+    //     cid: 'unique_image_cid', // Unique identifier for the image
+    //   }
+    // ];
+
+    const userMessage = `
+      <p>Hey, I am <b>${name}</b>.</p>
+      <p>My email is <b>${email}</b>.</p>
+      <p>My message is <b>${message}</b>.</p>
+      `;
+      // <img src="cid:unique_image_cid" alt="IMG_6294">
 
     await sendMail({
       email,
       userMessage,
+      // attachments
+      // {
+      //   filename: 'IMG_6295.png',
+      //   content: imgBase64,
+      //   encoding: 'base64'
+      // }
     });
 
     return res.status(200).json({
@@ -323,18 +347,18 @@ export const addProject = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
-    // const myCloud = await cloudinary.v2.uploader.upload(image, {
-    //   folder: "portfolio",
-    // });
+    const myCloud = await cloudinary.v2.uploader.upload(image, {
+      folder: "portfolio",
+    });
     user.projects.unshift({
       url,
       title,
       description,
       techStack,
-      // image: {
-      //   public_id: myCloud.public_id,
-      //   url: myCloud.secure_url,
-      // },
+      image: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
     });
 
     await user.save();

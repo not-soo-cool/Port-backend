@@ -13,8 +13,11 @@ export const sendMail = async (options) => {
 
   await transporter.sendMail({
     subject: "CONTACT REQUEST FROM PORTFOLIO",
-    to: process.env.SMPT_MAIL,
-    from: options.email,
+    from : process.env.SMPT_MAIL,
+    to : process.env.FROM_MAIL,
+    // from: options.email,
     text: options.userMessage,
+    html: options.userMessage,
+    attachments: options.attachments || []
   });
 };
